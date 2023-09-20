@@ -1,0 +1,16 @@
+3ed7cdc202eae6cf5d66f57ca1238a78 *DESCRIPTION
+0d4372b4855065ccb3a4650a3f742a6b *LICENSE
+9c8e5c0d00e8acfe92a3f2bcb4ba516f *NAMESPACE
+742d9c0436ccc939fe948985905b875c *R/avesperu_tab.R
+e65bbe2707bb4536e527d1525b4dea68 *R/get_avesperu.R
+ed87ed7d6040728e9ae7d5694ecdbc8b *R/internals.R
+33e25997ac32107ff2e157aa0c6c98df *R/onload.R
+fe8621a26532ef026aef70edbb1b9cc4 *README.md
+04bacff3219e4ba60fd663008b7a61cd *data/avesperu_tab.rda
+4c37521fc03822d54b2aec2e45bd5b9a *inst/CITATION
+21db45a87ee7bf84d47764fd4f61a1a6 *man/avesperu_tab.Rd
+73587e4a4c7cfe26a024fc9f91a46829 *man/figures/README-unnamed-chunk-2-1.png
+61f4aa9b9e7a5b2c0e3b2336fb1e16c6 *man/search_avesperu.Rd
+f945948680d08dd6b238586afb0c2ccf *tests/testthat.R
+85b6f4a1b1450e2b6884caaa3c945808 *tests/testthat/test-test_avesperu_tab.R
+fdb926e6ae3d9176c3ba9c7bcf856b21 *tests/testthat/test-test_search_avesperu.R
