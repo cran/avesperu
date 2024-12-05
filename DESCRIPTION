@@ -1,6 +1,6 @@
 Package: avesperu
 Title: Access to the List of Birds Species of Peru
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: 
     person("Paul E.", "Santos Andrade", , 
     "paulefrens@gmail.com", role = c("aut", "cre"),
@@ -10,7 +10,7 @@ License: MIT + file LICENSE
 Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 URL: https://github.com/PaulESantos/avesperu,
         https://paulesantos.github.io/avesperu/
 BugReports: https://github.com/PaulESantos/avesperu/issues
@@ -18,8 +18,8 @@ Depends: R (>= 2.10)
 LazyData: true
 Maintainer: Paul E. Santos Andrade <paulefrens@gmail.com>
 NeedsCompilation: no
-Packaged: 2024-03-10 03:21:19 UTC; paule
+Packaged: 2024-12-05 04:23:30 UTC; PC
 Author: Paul E. Santos Andrade [aut, cre]
     (<https://orcid.org/0000-0002-6635-0375>)
 Repository: CRAN
-Date/Publication: 2024-03-10 04:00:02 UTC
+Date/Publication: 2024-12-05 05:40:01 UTC
