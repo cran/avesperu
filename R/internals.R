@@ -1,25 +1,49 @@
-# Function to clean species list names
+#' Standardize Species Names
+#'
+#'
+#' @param splist Character vector of species names
+#' @return Standardized species names
 #' @keywords internal
 standardize_names <- function(splist) {
-  fixed1 <- simple_cap(trimws(splist)) # all up
-  fixed2 <- gsub("cf\\.", "", fixed1)
-  fixed3 <- gsub("aff\\.", "", fixed2)
-  fixed4 <- trimws(fixed3) # remove trailing and leading space
-  fixed5 <- gsub("_", " ", fixed4) # change names separated by _ to space
 
-  # Hybrids
-  fixed6 <- gsub("(^x )|( x$)|( x )", " ", fixed5)
-  hybrids <- fixed5 == fixed6
-  if (!all(hybrids)) {
-    sp_hybrids <- splist[!hybrids]
-    warning(paste("The 'x' sign indicating hybrids have been removed in the",
-                  "following names before search:",
-                  paste(paste0("'", sp_hybrids, "'"), collapse = ", ")),
-            immediate. = TRUE, call. = FALSE)
+  # Paso 1
+  splist <- trimws(splist)
+
+  # Paso 2: Capitalización
+  splist <- vapply(splist, function(x) {
+    words <- strsplit(tolower(x), "\\s+")[[1]]
+    words[1] <- paste0(toupper(substring(words[1], 1, 1)),
+                       substring(words[1], 2))
+    if (length(words) > 1) {
+      words[2] <- paste0(tolower(substring(words[2], 1, 1)),
+                         substring(words[2], 2))
+    }
+    paste(words, collapse = " ")
+  }, character(1), USE.NAMES = FALSE)
+
+  # Paso 3: Limpieza con expreciones regulares combinadas
+  # Detectar híbridos primero para warning
+  has_hybrid <- grepl("(^x\\s)|( x$)|( x )", splist)
+
+  # Aplicar todas las transformaciones en una sola pasada
+  splist <- gsub("\\s*cf\\.\\s*|\\s*aff\\.\\s*", " ", splist)
+  splist <- gsub("(^x\\s)|( x$)|( x )", " ", splist)
+  splist <- gsub("_", " ", splist)
+  splist <- gsub("\\s{2,}", " ", splist)  # Reemplaze multiples espacios con uno
+  splist <- trimws(splist)
+
+  # Advertencia sobre híbridos si es necesario
+  if (any(has_hybrid)) {
+    sp_hybrids <- unique(splist[has_hybrid])
+    warning(
+      "The 'x' sign indicating hybrids have been removed in ",
+      length(sp_hybrids), " name(s) before search.",
+      call. = FALSE,
+      immediate. = TRUE
+    )
   }
-  # Merge multiple spaces
-  fixed7 <- gsub("(?<=[\\s])\\s*|^\\s+|\\s+$", "", fixed6, perl = TRUE)
-  return(fixed7)
+
+  return(splist)
 }
 
 #' @keywords internal
@@ -39,7 +63,6 @@ simple_cap <- function(x) {
 }
 
 #' @keywords internal
-#'
 find_duplicates <- function(vector) {
   # Count the frequency of each word
   word_counts <- table(vector)
@@ -88,7 +111,7 @@ unop_update_date <- function() {
   return(fecha)
 }
 
-
+#unop_update_date()
 # ---------------------------------------------------------------
 #' Check if the UNOP Checklist Has Been Updated
 #'
@@ -96,20 +119,21 @@ unop_update_date <- function() {
 #' website with a reference version date. It returns a message indicating
 #' whether an update has occurred.
 #'
-#' @param version_date Character string with the current local version date
-#'        (e.g., "05 de abril de 2025").
 #'
 #' @return A character message indicating if the site has a more recent update.
 #' @keywords internal
 
-unop_check_update <- function(version_date = "23 de junio de 2025") {
+unop_check_update <- function() {
   site_date <- unop_update_date()
+  version_date <- attr(avesperu::aves_peru_2025_v5, "version_date")
 
   if (is.na(site_date)) {
-    return("Could not extract the update date from the website.")
+    cli::cli_alert_danger(
+      "Failed to retrieve the update date from the website."
+    )
+    return(invisible(NULL))
   }
 
-  # Convert both dates to Date format for comparison
   parse_fecha <- function(fecha_str) {
     meses <- c("enero", "febrero", "marzo", "abril", "mayo", "junio",
                "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre")
@@ -123,14 +147,24 @@ unop_check_update <- function(version_date = "23 de junio de 2025") {
   fecha_version <- parse_fecha(version_date)
 
   if (is.na(fecha_sitio) || is.na(fecha_version)) {
-    return("Could not convert one or both dates into proper format.")
+    cli::cli_alert_warning(
+      "Unable to parse one or both dates in the expected format."
+    )
+    return(invisible(NULL))
   }
 
   if (fecha_sitio > fecha_version) {
-    return(paste0("UNOP database has been updated! New version: ", site_date))
+    cli::cli_alert_warning(
+      "A newer UNOP checklist version is available."
+    )
+    cli::cli_alert_info(
+      "Latest online version date: {site_date}."
+    )
   } else {
-    return(paste0("UNOP database is up to date (", site_date, ")."))
+    cli::cli_alert_success(
+      "The UNOP checklist is up to date (current version: {version_date})."
+    )
   }
+
+  invisible(NULL)
 }
-
-
